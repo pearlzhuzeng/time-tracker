@@ -11,9 +11,15 @@ import TaskItem from './components/TaskItem'
 import ElapsedTime from './components/ElapsedTime'
 
 import Task, { NotStartedTask, StartedTask, StoppedTask } from './models/Task'
+import type { Category } from './models/Category'
 
 type State = {
   activeTaskId: string, // key in tasks
+
+  // “Database”
+  categories: {
+    [id: string]: Category,
+  },
   tasks: {
     [id: string]: Task,
   },
@@ -28,6 +34,7 @@ class App extends Component {
     const active = new NotStartedTask(uuid())
     this.state = {
       activeTaskId: active.id,
+      categories: {},
       tasks: {
         [active.id]: active,
       },

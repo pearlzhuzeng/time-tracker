@@ -6,25 +6,39 @@ import Moment from 'moment'
 
 class Task {
   id: string
+  categoryId: string
   description: string
   _startTime: ?Moment
   _stopTime: ?Moment
 
   constructor (
     id: string,
+    categoryId: string = '',
     description: string = '',
     startTime: ?Moment = null,
     stopTime: ?Moment = null
   ) {
     this.id = id
+    this.categoryId = categoryId
     this.description = description
     this._startTime = startTime
     this._stopTime = stopTime
   }
 
+  setCategory (categoryId: string) {
+    return new this.constructor(
+      this.id,
+      categoryId,
+      this.description,
+      this._startTime,
+      this._stopTime
+    )
+  }
+
   setDescription (description: string) {
     return new this.constructor(
       this.id,
+      this.categoryId,
       description,
       this._startTime,
       this._stopTime
@@ -38,12 +52,12 @@ export default Task
  **************/
 
 export class NotStartedTask extends Task {
-  constructor (id: string, description: string = '') {
-    super(id, description)
+  constructor (id: string, categoryId: string = '', description: string = '') {
+    super(id, categoryId, description)
   }
 
   start () {
-    return new StartedTask(this.id, this.description)
+    return new StartedTask(this.id, this.categoryId, this.description)
   }
 }
 
@@ -52,10 +66,11 @@ export class NotStartedTask extends Task {
 export class StartedTask extends Task {
   constructor (
     id: string,
+    categoryId: string,
     description: string,
     startTime: Moment = new Moment()
   ) {
-    super(id, description, startTime)
+    super(id, categoryId, description, startTime)
   }
 
   getStartTime (): Moment {
@@ -68,7 +83,12 @@ export class StartedTask extends Task {
   }
 
   stop () {
-    return new StoppedTask(this.id, this.description, this.getStartTime())
+    return new StoppedTask(
+      this.id,
+      this.categoryId,
+      this.description,
+      this.getStartTime()
+    )
   }
 }
 
@@ -77,11 +97,12 @@ export class StartedTask extends Task {
 export class StoppedTask extends Task {
   constructor (
     id: string,
+    categoryId: string,
     description: string,
     startTime: Moment,
     stopTime: Moment = new Moment()
   ) {
-    super(id, description, startTime, stopTime)
+    super(id, categoryId, description, startTime, stopTime)
   }
 
   getStartTime (): Moment {
