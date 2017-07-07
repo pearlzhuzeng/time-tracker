@@ -4,6 +4,8 @@
  */
 
 import React from 'react'
+
+import { formatDuration } from '../helpers/timeFormatters'
 import type { StoppedTask } from '../models/Task'
 
 type Props = {
@@ -17,13 +19,13 @@ const TaskItem = ({ task, onChangeDescription }: Props) =>
       type="text"
       value={task.description}
       onChange={onChangeDescription}
-    />
-    <p>Duration: {task.getDuration().toISOString()}</p>
+    />{' '}
+    <p>Duration: {formatDuration(task.getDuration())}</p>
     <p>
       <span>
-        {task.getStartTime().toISOString()}
-        —
-        {task.getStopTime().toISOString()}
+        {task.getStartTime().format('LTS')}
+        –
+        {task.getStopTime().format('LTS')}
       </span>
     </p>
   </li>

@@ -5,6 +5,8 @@
 
 import React from 'react'
 
+import { formatDuration } from '../helpers/timeFormatters'
+
 import type { StartedTask } from '../models/Task'
 
 class ElapsedTime extends React.Component {
@@ -23,7 +25,7 @@ class ElapsedTime extends React.Component {
   render () {
     return (
       <span>
-        {this.props.task.getDuration().toISOString()}
+        {formatDuration(this.props.task.getDuration())}
       </span>
     )
   }
