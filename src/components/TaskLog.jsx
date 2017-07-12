@@ -11,17 +11,42 @@ import TaskItem from '../components/TaskItem'
 import ElapsedTime from '../components/ElapsedTime'
 
 import Task, { NotStartedTask, StartedTask, StoppedTask } from '../models/Task'
+import type { Category } from '../models/Category'
 
 type Props = {
   tasks: {
     [id: string]: Task,
   },
   activeTaskId: string,
+  categories: {
+    [id: string]: Category,
+  },
   onChangeTasks: ({ [string]: Task }) => any,
   onChangeActiveTask: string => any,
 }
 class TaskLog extends React.Component {
   props: Props
+
+  _createChangeDescriptionHandler = (
+    taskId: string = this.props.activeTaskId
+  ) => (e: SyntheticInputEvent) => {
+    const { tasks, onChangeTasks } = this.props
+    const { value } = e.target
+    onChangeTasks({
+      ...tasks,
+      [taskId]: tasks[taskId].setDescription(value),
+    })
+  }
+
+  _createChangeCategoryHandler = (taskId: string = this.props.activeTaskId) => (
+    categoryId: string
+  ) => {
+    const { tasks, onChangeTasks } = this.props
+    onChangeTasks({
+      ...tasks,
+      [taskId]: tasks[taskId].setCategory(categoryId),
+    })
+  }
 
   handleStart = () => {
     const { tasks, activeTaskId, onChangeTasks } = this.props
@@ -55,7 +80,7 @@ class TaskLog extends React.Component {
   }
 
   render () {
-    const { tasks, activeTaskId } = this.props
+    const { tasks, activeTaskId, categories } = this.props
     const activeTask = tasks[activeTaskId]
 
     return (
@@ -67,6 +92,7 @@ class TaskLog extends React.Component {
             value={activeTask.description}
             onChange={this._createChangeDescriptionHandler()}
           />
+          {/* Choose category of active task?? */}
           {activeTask instanceof NotStartedTask
             ? <button onClick={this.handleStart}>Start</button>
             : <button onClick={this.handleStop}>Stop</button>}
@@ -80,25 +106,16 @@ class TaskLog extends React.Component {
               <TaskItem
                 key={task.id}
                 task={task}
+                categories={categories}
                 onChangeDescription={this._createChangeDescriptionHandler(
                   task.id
                 )}
+                onChangeCategory={this._createChangeCategoryHandler(task.id)}
               />
           )}
         </ul>
       </div>
     )
-  }
-
-  _createChangeDescriptionHandler = (
-    taskId: string = this.props.activeTaskId
-  ) => (e: SyntheticInputEvent) => {
-    const { tasks, onChangeTasks } = this.props
-    const { value } = e.target
-    onChangeTasks({
-      ...tasks,
-      [taskId]: tasks[taskId].setDescription(value),
-    })
   }
 }
 
