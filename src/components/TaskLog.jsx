@@ -8,8 +8,9 @@ import { values, omit } from 'ramda'
 import uuid from 'uuid/v1'
 import styled from 'styled-components'
 
-import TaskItem from '../components/TaskItem'
-import ElapsedTime from '../components/ElapsedTime'
+import TaskItem from './TaskItem'
+import ElapsedTime from './ElapsedTime'
+import TimeEditor from './TimeEditor'
 
 import Task, { NotStartedTask, StartedTask, StoppedTask } from '../models/Task'
 import type { Category } from '../models/Category'
@@ -129,6 +130,12 @@ class TaskLog extends React.Component {
           {activeTask instanceof StartedTask &&
             <ElapsedTime task={activeTask} />}
         </p>
+        {activeTask instanceof StartedTask
+          ? <TimeEditor
+            time={activeTask.getStartTime()}
+            onChange={activeTask.onChangeStartTime}
+          />
+          : <p />}
         <ul>
           {values(tasks).map(
             (task: Task, id) =>

@@ -42,9 +42,6 @@ const TaskItem = ({
       onChange={onChangeDescription}
     />{' '}
     <p>Duration: {formatDuration(task.getDuration())}</p>
-    <button type="submit" onClick={onDelete}>
-      [x]
-    </button>
     <CategorySelectBox
       categoryId={task.categoryId}
       categories={categories}
@@ -57,6 +54,9 @@ const TaskItem = ({
         <TimeEditor time={task.getStopTime()} onChange={onChangeStopTime} />
       </span>
     </p>
+    <button type="submit" onClick={onDelete}>
+      Delete item
+    </button>
   </li>
 
 export default TaskItem
