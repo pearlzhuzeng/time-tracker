@@ -5,9 +5,11 @@
 
 import React from 'react'
 import styled from 'styled-components'
-import { append, remove, update } from 'ramda'
+import { values } from 'ramda'
 
 import type { Category } from '../models/Category'
+
+import CategoryForm from './CategoryForm'
 
 type Props = {
   categories: {
@@ -19,39 +21,27 @@ type Props = {
 class CategoryList extends React.Component {
   props: Props
 
-  state: Category = {
-    id: '',
-    name: '',
-    color: 'Green',
-  }
-
-  handleChangeName = (e: SyntheticInputEvent) => {
-    this.setState({ name: e.target.value })
-  }
-
-  handleChangeColor = (e: SyntheticInputEvent) => {
-    this.setState({ name: e.target.value })
+  handleAddCategory = (category: Category) => {
+    const { onChangeCategories, categories } = this.props
+    onChangeCategories({
+      ...categories,
+      [category.id]: category,
+    })
   }
 
   render () {
+    const { categories } = this.props
     return (
       <Categories>
         <h2>Categories</h2>
-        <form onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            placeholder="add a new category"
-            value={this.state.name}
-            onChange={this.handleChangeName}
-          />
-          <input
-            type="text"
-            placeholder="put in a hex value for the color you want"
-            value={this.state.color}
-            onChange={this.handleChangeColor}
-          />
-          <button type="submit">+</button>
-        </form>
+        <CategoryForm onSubmit={this.handleAddCategory} />
+        <ul>
+          {values(categories).map(category =>
+            <li key={category.id} style={{ color: category.color }}>
+              {category.name}
+            </li>
+          )}
+        </ul>
       </Categories>
     )
   }
