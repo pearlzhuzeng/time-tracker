@@ -4,16 +4,37 @@
  */
 
 import React from 'react'
+import { values } from 'ramda'
 
 import { formatDuration } from '../helpers/timeFormatters'
+
 import type { StoppedTask } from '../models/Task'
+import type { Category } from '../models/Category'
+
+import CategorySelectBox from './CategorySelectBox'
+import TimeEditor from './TimeEditor'
 
 type Props = {
   task: StoppedTask,
+  categories: {
+    [id: string]: Category,
+  },
   onChangeDescription: SyntheticInputEvent => void,
+  onChangeCategory: string => any,
+  onChangeStartTime: moment$Moment => any,
+  onChangeStopTime: moment$Moment => any,
+  onDelete: () => any,
 }
 
-const TaskItem = ({ task, onChangeDescription }: Props) =>
+const TaskItem = ({
+  task,
+  categories,
+  onChangeDescription,
+  onChangeCategory,
+  onChangeStartTime,
+  onChangeStopTime,
+  onDelete,
+}: Props) =>
   <li>
     <input
       type="text"
@@ -21,11 +42,19 @@ const TaskItem = ({ task, onChangeDescription }: Props) =>
       onChange={onChangeDescription}
     />{' '}
     <p>Duration: {formatDuration(task.getDuration())}</p>
+    <button type="submit" onClick={onDelete}>
+      [x]
+    </button>
+    <CategorySelectBox
+      categoryId={task.categoryId}
+      categories={categories}
+      onChange={onChangeCategory}
+    />
     <p>
       <span>
-        {task.getStartTime().format('LTS')}
+        <TimeEditor time={task.getStartTime()} onChange={onChangeStartTime} />
         –
-        {task.getStopTime().format('LTS')}
+        <TimeEditor time={task.getStopTime()} onChange={onChangeStopTime} />
       </span>
     </p>
   </li>

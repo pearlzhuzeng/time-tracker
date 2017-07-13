@@ -82,6 +82,15 @@ export class StartedTask extends Task {
     return Moment.duration(Moment().diff(this.getStartTime()))
   }
 
+  setStartTime (startTime: Moment) {
+    return new this.constructor(
+      this.id,
+      this.categoryId,
+      this.description,
+      startTime
+    )
+  }
+
   stop () {
     return new StoppedTask(
       this.id,
@@ -117,5 +126,25 @@ export class StoppedTask extends Task {
 
   getDuration (): moment$MomentDuration {
     return Moment.duration(this.getStopTime().diff(this.getStartTime()))
+  }
+
+  setStartTime (startTime: Moment) {
+    return new this.constructor(
+      this.id,
+      this.categoryId,
+      this.description,
+      startTime,
+      this.getStopTime()
+    )
+  }
+
+  setStopTime (stopTime: Moment) {
+    return new this.constructor(
+      this.id,
+      this.categoryId,
+      this.description,
+      this.getStartTime(),
+      stopTime
+    )
   }
 }
