@@ -4,8 +4,9 @@
  */
 
 import React from 'react'
-import { values } from 'ramda'
+import { values, omit } from 'ramda'
 import uuid from 'uuid/v1'
+import styled from 'styled-components'
 
 import TaskItem from '../components/TaskItem'
 import ElapsedTime from '../components/ElapsedTime'
@@ -27,9 +28,9 @@ type Props = {
 class TaskLog extends React.Component {
   props: Props
 
-  _createChangeDescriptionHandler = (
-    taskId: string = this.props.activeTaskId
-  ) => (e: SyntheticInputEvent) => {
+  _createChangeDescriptionHandler = (taskId: string) => (
+    e: SyntheticInputEvent
+  ) => {
     const { tasks, onChangeTasks } = this.props
     const { value } = e.target
     onChangeTasks({
@@ -38,14 +39,43 @@ class TaskLog extends React.Component {
     })
   }
 
-  _createChangeCategoryHandler = (taskId: string = this.props.activeTaskId) => (
-    categoryId: string
-  ) => {
+  _createChangeCategoryHandler = (taskId: string) => (categoryId: string) => {
     const { tasks, onChangeTasks } = this.props
     onChangeTasks({
       ...tasks,
       [taskId]: tasks[taskId].setCategory(categoryId),
     })
+  }
+
+  _createChangeStartTimeHandler = (taskId: string) => (
+    startTime: moment$Moment
+  ) => {
+    const { tasks, onChangeTasks } = this.props
+    const task = tasks[taskId]
+    if (task instanceof StartedTask || task instanceof StoppedTask) {
+      onChangeTasks({
+        ...tasks,
+        [taskId]: task.setStartTime(startTime),
+      })
+    }
+  }
+
+  _createChangeStopTimeHandler = (taskId: string) => (
+    stopTime: moment$Moment
+  ) => {
+    const { tasks, onChangeTasks } = this.props
+    const task = tasks[taskId]
+    if (task instanceof StoppedTask) {
+      onChangeTasks({
+        ...tasks,
+        [taskId]: task.setStartTime(stopTime),
+      })
+    }
+  }
+
+  _createDeleteTaskHandler = (taskId: string) => () => {
+    const { tasks, onChangeTasks } = this.props
+    onChangeTasks(omit([taskId], tasks))
   }
 
   handleStart = () => {
@@ -84,13 +114,13 @@ class TaskLog extends React.Component {
     const activeTask = tasks[activeTaskId]
 
     return (
-      <div>
+      <TaskContainer>
         <p>
           <input
             type="text"
             placeholder="What are you working on?"
             value={activeTask.description}
-            onChange={this._createChangeDescriptionHandler()}
+            onChange={this._createChangeDescriptionHandler(activeTaskId)}
           />
           {/* Choose category of active task?? */}
           {activeTask instanceof NotStartedTask
@@ -111,12 +141,17 @@ class TaskLog extends React.Component {
                   task.id
                 )}
                 onChangeCategory={this._createChangeCategoryHandler(task.id)}
+                onChangeStartTime={this._createChangeStartTimeHandler(task.id)}
+                onChangeStopTime={this._createChangeStopTimeHandler(task.id)}
+                onDelete={this._createDeleteTaskHandler(task.id)}
               />
           )}
         </ul>
-      </div>
+      </TaskContainer>
     )
   }
 }
 
 export default TaskLog
+
+const TaskContainer = styled.div`width: 20em;`
