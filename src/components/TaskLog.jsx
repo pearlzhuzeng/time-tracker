@@ -133,7 +133,7 @@ class TaskLog extends React.Component {
         {activeTask instanceof StartedTask
           ? <TimeEditor
             time={activeTask.getStartTime()}
-            onChange={activeTask.onChangeStartTime}
+            onChange={this._createChangeStartTimeHandler(activeTaskId)}
           />
           : <p />}
         <ul>
